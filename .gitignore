@@ -1,0 +1,29 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+
+# Local data & heavy artifacts (keep out of git)
+data/zips/
+data/frames/
+data/manifest.csv
+outputs/
+temp/
+*.zip
+
+# Logs / OS
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Streamlit / notebooks
+.streamlit/secrets.toml
+*.ipynb_checkpoints/

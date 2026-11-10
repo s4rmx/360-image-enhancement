@@ -1,0 +1,82 @@
+# Frozen defaults for the main benchmark. Sweep grids are optional CLI extras.
+
+shared:
+  white_balance: true
+  post_levels: true
+  vibrance: false
+  strength: 1.0  # Out = (1-t)*I + t*E; benchmark at t=1
+  wb:
+    p: 6
+    alpha: 0.3
+  levels:
+    p_lo: 0.5
+    p_hi: 99.5
+    gamma: true  # only for CLAHE pre-stage; post-levels use stretch without gamma
+  vibrance_k: 0.2
+  preview_size: [2048, 1024]
+  jpeg_quality: 95
+
+methods:
+  original: {}
+  wb_only: {}
+
+  clahe:
+    clip_limit: 2.0
+    grid: [8, 16]  # rows, cols on original image
+
+  msrcr:
+    sigmas: [15, 80, 250]  # at reference width 2048
+    ref_width: 2048
+    work_width: 2048
+    alpha: 125.0
+    beta: 46.0
+    gain: 192.0
+    offset: -30.0
+    balance_pct: 1.0
+
+  lime:
+    alpha: 0.15
+    gamma: 0.8
+    eps: 1.0e-3
+    solve_width: 1024
+    guided_radius: 8
+    guided_eps: 1.0e-3
+
+  fusion:
+    ev: [-1, 0, 1, 2]
+    contrast_weight: 1.0
+    saturation_weight: 1.0
+    exposure_weight: 1.0
+    pad: 256
+
+  llf:
+    sigma_r: 0.4
+    alpha_d: 0.6
+    beta: 0.7
+    n_samples: 10
+    n_levels: 8
+
+# Optional --sweep grids (one dataset only)
+sweep:
+  clahe:
+    clip_limit: [1.5, 2.0, 3.0]
+    grid: [[4, 8], [8, 16]]
+  lime:
+    alpha: [0.08, 0.15, 0.3]
+    gamma: [0.6, 0.8]
+  fusion:
+    ev: [[-1, 0, 1, 2], [0, 1, 2]]
+  llf:
+    alpha_d: [0.5, 0.7]
+    beta: [0.6, 0.8]
+
+runner:
+  methods: all
+  datasets: all
+  skip_existing: true
+
+# Locked after blind-vote session (26 votes): CLAHE ranked #1 by win rate.
+recommendation:
+  method: clahe
+  locked: true
+  reason: "Highest blind-vote win rate (75% on early sample); strong speed/RAM vs fusion/msrcr"
